@@ -1,8 +1,11 @@
 {
-  "name": "odin-blog-backend",
+  "name": "odin-discord-backend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "test-db.js",
+  "directories": {
+    "lib": "lib"
+  },
   "scripts": {
     "dev": "node --watch src/app.js",
     "commit": "git add . && git commit -m \"commit\" && git push",
@@ -10,17 +13,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/reverse-smartass/odin-blog-backend.git"
+    "url": "git+https://github.com/reverse-smartass/odin-discord-backend.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
   "bugs": {
-    "url": "https://github.com/reverse-smartass/odin-blog-backend/issues"
+    "url": "https://github.com/reverse-smartass/odin-discord-backend/issues"
   },
-  "homepage": "https://github.com/reverse-smartass/odin-blog-backend#readme",
-  "dependencies": {
+  "homepage": "https://github.com/reverse-smartass/odin-discord-backend#readme",
+   "dependencies": {
     "@prisma/adapter-pg": "^7.5.0",
     "@prisma/client": "^7.5.0",
     "@quixo3/prisma-session-store": "^3.1.19",
