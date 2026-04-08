@@ -114,7 +114,7 @@ app.post("/login", (req, res, next) => {
 
       return res.status(200).json({
         message: "Logged in successfully",
-        user: { id: user.id, email: user.email }, // Send non-sensitive info
+        user: { id: user.id, email: user.email, identifier: user.identifier }, // Send non-sensitive info
         token,
       });
     },

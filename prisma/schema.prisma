@@ -15,28 +15,26 @@ datasource db {
 model User { 
   id    String    @id @default(uuid()) 
   email String  @unique
-  name  String?
+  identifier String @unique
+  displayName  String?
   password String @default("placeholder")
-  posts Post[]
-  comments Comment[]
-  role  String  @default("BASIC")
+  sentMessages   Message[] @relation("SentMessages")
+  chatrooms   Chatroom[] @relation("ChatroomUsers")
 } 
 
-model Post { 
-  id        String     @id @default(uuid()) 
-  title     String
-  content   String?
-  published Boolean @default(false) 
-  author    User    @relation(fields: [authorId], references: [id]) 
-  authorId  String
-  comments  Comment[]
+model Chatroom { 
+  id    String    @id @default(cuid()) 
+  displayName  String?
+  users   User[] @relation("ChatroomUsers")
+  chatroomMessages Message[] @relation("ChatroomMessages")
 } 
 
-model Comment{
-  id        String     @id @default(uuid()) 
-  content   String?
-  author    User    @relation(fields: [authorId], references: [id]) 
-  post      Post    @relation(fields: [postId], references: [id])
-  authorId  String
-  postId    String
+model Message {
+  id          Int      @id @default(autoincrement())
+  content     String
+  createdAt   DateTime @default(now())
+  sender      User     @relation("SentMessages", fields: [senderId], references: [id])
+  senderId    String
+  chatroom    Chatroom @relation("ChatroomMessages", fields: [chatroomId], references: [id])
+  chatroomId  String
 }
