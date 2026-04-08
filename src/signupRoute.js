@@ -5,18 +5,12 @@ import { body, validationResult } from "express-validator";
 import bcrypt from "bcryptjs";
 
 const signupRouter = Router();
-const allowedRoles = ["BASIC", "ADMIN"];
 
 const validateSignUp = [
-  body("first_name")
+  body("identifier")
     .trim()
     .notEmpty()
-    .withMessage("First name is required")
-    .escape(),
-  body("last_name")
-    .trim()
-    .notEmpty()
-    .withMessage("Last name is required")
+    .withMessage("Identifier is required")
     .escape(),
   body("email")
     .trim()
@@ -26,17 +20,6 @@ const validateSignUp = [
   body("password")
     .isLength({ min: 6 })
     .withMessage("Password must be at least 6 characters"),
-  body("role")
-    .trim()
-    .notEmpty()
-    .withMessage("Role is required")
-    .escape()
-    .custom((value) => {
-      if (!allowedRoles.includes(value)) {
-        throw new Error("Invalid selection");
-      }
-      return true;
-    }),
 
   // Custom validator to check if passwords match
   body("password_confirm").custom((value, { req }) => {
@@ -56,17 +39,16 @@ signupRouter.post("/", validateSignUp, async (req, res, next) => {
       previousData: req.body,
     });
   }
-  const { first_name, last_name, email, password, role } = req.body;
+  const { identifier, email, password } = req.body;
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await prisma.user.create({
       data: {
-        name: first_name + " " + last_name,
+        identifier: identifier,
         email: email,
-        password: hashedPassword,
-        role: role,
+        password: hashedPassword
       },
       include: {
         posts: true,

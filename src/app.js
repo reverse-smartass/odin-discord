@@ -7,7 +7,7 @@ import bcrypt from "bcryptjs";
 import signupRouter from "./signupRoute.js";
 import passport from "passport";
 import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
-import postRouter from "./postsRoute.js";
+import messageRouter from "./messagesRoute.js";
 import { type } from "node:os";
 
 const app = express();
@@ -15,7 +15,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use("/sign-up", signupRouter);
-app.use("/posts", postRouter);
+app.use("/message", messageRouter);
 
 passport.use(
   new LocalStrategy(async (username, password, done) => {
