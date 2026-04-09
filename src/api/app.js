@@ -1,14 +1,13 @@
 import express from "express";
 import jwt from "jsonwebtoken";
-import prisma from "../lib/prisma.ts";
-import { body, validationResult } from "express-validator";
+import prisma from "../../lib/prisma.ts";
 import { Strategy as LocalStrategy } from "passport-local";
 import bcrypt from "bcryptjs";
 import signupRouter from "./signupRoute.js";
 import passport from "passport";
 import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
 import messageRouter from "./messagesRoute.js";
-import { type } from "node:os";
+
 
 const app = express();
 app.use(express.json());

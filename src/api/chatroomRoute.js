@@ -1,5 +1,5 @@
 import { Router } from "express";
-import prisma from "../lib/prisma.ts";
+import prisma from "../../lib/prisma.ts";
 import { body, validationResult } from "express-validator";
 import passport from "passport";
 const chatroomRouter = Router();
@@ -50,7 +50,7 @@ chatroomRouter.post("/new", validateChatroom, passport.authenticate("jwt", { ses
   
 });
 
-chatroomRouter.patch("/:id/edit", validatechatroom, passport.authenticate("jwt", { session: false }), 
+chatroomRouter.patch("/:id/edit", validateChatroom, passport.authenticate("jwt", { session: false }), 
   async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
