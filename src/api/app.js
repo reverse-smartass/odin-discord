@@ -3,11 +3,13 @@ import jwt from "jsonwebtoken";
 import prisma from "../../lib/prisma.ts";
 import { Strategy as LocalStrategy } from "passport-local";
 import bcrypt from "bcryptjs";
-import signupRouter from "./signupRoute.js";
 import passport from "passport";
 import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
-import messageRouter from "./messagesRoute.js";
 
+import messageRouter from "./messagesRoute.js";
+import userRouter from "./userRoute.js";
+import chatroomRouter from "./chatroomRoute.js";
+import signupRouter from "./signupRoute.js";
 
 const app = express();
 app.use(express.json());
@@ -15,6 +17,8 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use("/sign-up", signupRouter);
 app.use("/message", messageRouter);
+app.use("/user", userRouter);
+app.use("/chatroom", chatroomRouter);
 
 passport.use(
   new LocalStrategy(async (username, password, done) => {
@@ -61,35 +65,6 @@ passport.use(
 
 app.use(passport.initialize());
 
-app.get("/users", async (req, res) => {
-  const result = await prisma.user.findMany();
-  res.json({ result });
-});
-
-app.get("/users/:userid", async (req, res) => {
-  const userId = req.params.userid;
-
-  const result = await prisma.user.findUnique({
-    where: {
-      id: userId,
-    },
-  });
-
-  res.json(result);
-});
-
-app.get("/users/:userid/comments", async (req, res) => {
-  const userId = req.params.userid;
-
-  const result = await prisma.comment.findMany({
-    where: {
-      id: userId,
-    },
-  });
-
-  res.json(result);
-});
-
 app.post("/login", (req, res, next) => {
   passport.authenticate(
     "local",
@@ -120,7 +95,7 @@ app.post("/login", (req, res, next) => {
   )(req, res, next);
 });
 
-export function verifyToken(req, res, next) {
+/* export function verifyToken(req, res, next) {
   const bearerHeader = req.headers["authorization"];
 
   if (typeof bearerHeader !== undefined) {
@@ -142,7 +117,7 @@ export function verifyToken(req, res, next) {
   } else {
     res.sendStatus(403);
   }
-}
+} */
 
 app.listen(5000, (error) => {
   if (error) {

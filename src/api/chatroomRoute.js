@@ -9,9 +9,9 @@ const validateChatroom = [
   body("name")
     .trim()
     .notEmpty()
-    .withchatroom("Chatroom name cannot be empty")
+    .withMessage("Chatroom name cannot be empty")
     .isLength({ min: 3, max: 32 })
-    .withchatroom("Name must be between 3 and 32 characters")
+    .withMessage("Name must be between 3 and 32 characters")
     .escape()
 ];
 
@@ -63,12 +63,13 @@ chatroomRouter.post("/new", passport.authenticate("jwt", { session: false }), va
         users: {
           connect: users.map((userId) => ({ id: userId })),
         },
+        ownerId: req.user.id
       }
     });
     console.log("Created chatroom:", chatroom);
     res.status(201).json({
-      chatroom: "chatroom created",
-      user: { id: chatroom.id, title: chatroom.title, content: chatroom.content},
+      message: "chatroom created",
+      chatroom: { id: chatroom.id, name: chatroom.name},
     });
   } catch (err) {
     return next(err);
@@ -76,7 +77,7 @@ chatroomRouter.post("/new", passport.authenticate("jwt", { session: false }), va
   
 });
 
-chatroomRouter.patch("/:id/edit", passport.authenticate("jwt", { session: false }), validateChatroom, isChatroomOwner, 
+chatroomRouter.patch("/:chatroomid/edit", passport.authenticate("jwt", { session: false }), validateChatroom, isChatroomOwner, 
   async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -86,7 +87,7 @@ chatroomRouter.patch("/:id/edit", passport.authenticate("jwt", { session: false 
     });
   }
 
-  const chatroomId = req.params.id;
+  const chatroomId = req.params.chatroomid;
   const {displayName, users} = req.body;
   
 
@@ -99,13 +100,106 @@ chatroomRouter.patch("/:id/edit", passport.authenticate("jwt", { session: false 
       data: {
         name: displayName,
         users: {
-          connect: users.map((userId) => ({ id: userId })),
+          set: users.map((userId) => ({ id: userId })),
         },
       }
     });
     console.log("Updated chatroom:", updatedchatroom);
     res.status(200).json({
       chatroom: "chatroom updated",
+      updatedchatroom
+    });
+  } catch (err) {
+    return next(err);
+  }
+  
+});
+
+chatroomRouter.patch("/:chatroomid/adduser/:userid", passport.authenticate("jwt", { session: false }), validateChatroom, isChatroomOwner, 
+  async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.json({
+      errors: errors.array(),
+      previousData: req.body,
+    });
+  }
+
+  const chatroomId = req.params.chatroomid;
+  const userId = req.params.userid;
+  
+  try {
+    const newUser = await prisma.user.findUnique({
+      where: {
+        id: userId
+      }
+    });
+
+    if (!newUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+
+    const updatedchatroom = await prisma.chatroom.update({
+      where: {
+        id: chatroomId,
+      },
+      data: {
+        users: {
+          connect: newUser ? { id: newUser.id } : undefined,
+        },
+      }
+    });
+    console.log("Updated chatroom:", updatedchatroom);
+    res.status(200).json({
+      message: "chatroom updated",
+      updatedchatroom
+    });
+  } catch (err) {
+    return next(err);
+  }
+  
+});
+
+chatroomRouter.patch("/:chatroomid/removeuser/:userid", passport.authenticate("jwt", { session: false }), validateChatroom, isChatroomOwner, 
+  async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.json({
+      errors: errors.array(),
+      previousData: req.body,
+    });
+  }
+
+  const chatroomId = req.params.chatroomid;
+  const userId = req.params.userid;
+  
+  try {
+    const currentUsers = await prisma.user.findMany({
+      where: {
+        chatrooms: {
+          some: {
+            id: chatroomId,
+          }
+        }
+      }
+    });
+
+    const updatedUsers = currentUsers.filter((user) => user.id !== userId).map((user) => ({ id: user.id }));
+
+    const updatedchatroom = await prisma.chatroom.update({
+      where: {
+        id: chatroomId,
+      },
+      data: {
+        users: {
+          set: updatedUsers,
+        },
+      }
+    });
+    console.log("Updated chatroom:", updatedchatroom);
+    res.status(200).json({
+      message: "chatroom updated",
       updatedchatroom
     });
   } catch (err) {

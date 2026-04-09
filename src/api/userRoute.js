@@ -79,10 +79,12 @@ const validateNewPassword = [
         .status(403)
         .json({ error: "You are not authorized to edit this user." });
     }
-    const pass = await prisma.user.findUnique({
+    
+    const user = await prisma.user.findUnique({
       where: { id: req.params.userid },
-    }).password;
-    const compare = await bcrypt.compare(value, pass);
+    });
+    const compare = await bcrypt.compare(value, user.password);
+
     if (!compare) {
       throw new Error("Old password is incorrect");
     }
