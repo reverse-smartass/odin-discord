@@ -4,6 +4,31 @@ import { body, validationResult } from "express-validator";
 import passport from "passport";
 const messageRouter = Router();
 
+const isFromUser = async (req, res, next) => {
+
+  const messageId = req.params.messageid;
+
+  try {
+    const message = await prisma.message.findUnique({
+      where: {
+        id: messageId,
+      },
+    });
+
+    if (!message) {
+      return res.status(404).json({ error: "Message not found" });
+    }
+
+    if (message.senderId !== req.user.id) {
+      return res
+        .status(403)
+        .json({ error: "You are not authorized to edit this message." });
+    }
+    next();
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+};
 
 const validatemessage = [
   body("text_content")
@@ -13,7 +38,7 @@ const validatemessage = [
     .escape()
 ];
 
-messageRouter.post("/new", validatemessage, passport.authenticate("jwt", { session: false }), 
+messageRouter.post("/new", passport.authenticate("jwt", { session: false }), validatemessage, 
   async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -38,7 +63,7 @@ messageRouter.post("/new", validatemessage, passport.authenticate("jwt", { sessi
     console.log("Created message:", message);
     res.status(201).json({
       message: "message created",
-      user: { id: message.id, title: message.title, content: message.content},
+      msg: { id: message.id, title: message.title, content: message.content},
     });
   } catch (err) {
     return next(err);
@@ -46,7 +71,7 @@ messageRouter.post("/new", validatemessage, passport.authenticate("jwt", { sessi
   
 });
 
-messageRouter.patch("/:messageid/editmessage", validatemessage, passport.authenticate("jwt", { session: false }), 
+messageRouter.patch("/:messageid/editmessage", passport.authenticate("jwt", { session: false }), validatemessage, isFromUser, 
   async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -83,7 +108,7 @@ messageRouter.patch("/:messageid/editmessage", validatemessage, passport.authent
   
 });
 
-messageRouter.delete("/:messageid/delete", passport.authenticate("jwt", { session: false }), 
+messageRouter.delete("/:messageid/delete", passport.authenticate("jwt", { session: false }), isFromUser,
   async (req, res, next) => {
 
   const messageId = req.params.messageid;
@@ -110,7 +135,7 @@ messageRouter.delete("/:messageid/delete", passport.authenticate("jwt", { sessio
   
 });
 
-messageRouter.get("/", async (req, res) => {
+messageRouter.get("/all", async (req, res) => {
   const result = await prisma.message.findMany();
   res.json({ result });
 });
@@ -127,12 +152,25 @@ messageRouter.get("/:messageid", async (req, res) => {
   res.json(result);
 });
 
-messageRouter.get("/:messageid/comments", async (req, res) => {
-  const messageId = req.params.messageid;
+messageRouter.get("/fromuser/:userid", async (req, res) => {
+  const userId = req.params.userid;
 
-  const result = await prisma.comment.findMany({
+  const result = await prisma.message.findMany({
     where: {
-      messageId: messageId,
+      senderId: userId,
+    },
+  });
+
+  res.json(result);
+});
+
+
+messageRouter.get("/inchatroom/:chatroomid", async (req, res) => {
+  const chatroomId = req.params.chatroomid;
+
+  const result = await prisma.message.findMany({
+    where: {
+      chatroomId: chatroomId,
     },
   });
 

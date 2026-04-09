@@ -15,8 +15,34 @@ const validateChatroom = [
     .escape()
 ];
 
+const isChatroomOwner = async (req, res, next) => {
 
-chatroomRouter.post("/new", validateChatroom, passport.authenticate("jwt", { session: false }), 
+  const chatroomId = req.params.chatroomid;
+
+  try {
+    const chatroom = await prisma.chatroom.findUnique({
+      where: {
+        id: chatroomId,
+      },
+    });
+
+    if (!chatroom) {
+      return res.status(404).json({ error: "Chatroom not found" });
+    }
+
+    if (chatroom.ownerId !== req.user.id) {
+      return res
+        .status(403)
+        .json({ error: "You are not authorized to edit this chatroom." });
+    }
+    next();
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+};
+
+
+chatroomRouter.post("/new", passport.authenticate("jwt", { session: false }), validateChatroom,
   async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -50,7 +76,7 @@ chatroomRouter.post("/new", validateChatroom, passport.authenticate("jwt", { ses
   
 });
 
-chatroomRouter.patch("/:id/edit", validateChatroom, passport.authenticate("jwt", { session: false }), 
+chatroomRouter.patch("/:id/edit", passport.authenticate("jwt", { session: false }), validateChatroom, isChatroomOwner, 
   async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -88,7 +114,7 @@ chatroomRouter.patch("/:id/edit", validateChatroom, passport.authenticate("jwt",
   
 });
 
-chatroomRouter.delete("/:chatroomid/delete", passport.authenticate("jwt", { session: false }), 
+chatroomRouter.delete("/:chatroomid/delete", passport.authenticate("jwt", { session: false }), isChatroomOwner, 
   async (req, res, next) => {
 
   const chatroomId = req.params.chatroomid;

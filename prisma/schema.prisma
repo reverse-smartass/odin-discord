@@ -20,12 +20,15 @@ model User {
   password String @default("placeholder")
   sentMessages   Message[] @relation("SentMessages")
   chatrooms   Chatroom[] @relation("ChatroomUsers")
+  ownedChatrooms Chatroom[] @relation("OwnedChatrooms")
 } 
 
 model Chatroom { 
   id    String    @id @default(cuid()) 
-  displayName  String?
+  roomName  String?
   users   User[] @relation("ChatroomUsers")
+  owner   User   @relation("OwnedChatrooms", fields: [ownerId], references: [id])
+  ownerId String
   chatroomMessages Message[] @relation("ChatroomMessages")
 } 
 

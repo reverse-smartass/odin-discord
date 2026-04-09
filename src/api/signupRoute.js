@@ -1,5 +1,4 @@
 import { Router } from "express";
-import jwt from "jsonwebtoken";
 import prisma from "../../lib/prisma.ts";
 import { body, validationResult } from "express-validator";
 import bcrypt from "bcryptjs";
