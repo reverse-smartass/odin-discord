@@ -19,7 +19,7 @@ model User {
   displayName  String?
   password String @default("placeholder")
   sentMessages   Message[] @relation("SentMessages")
-  chatrooms   Chatroom[] @relation("ChatroomUsers")
+  memberOfChatrooms   Chatroom[] @relation("ChatroomUsers")
   ownedChatrooms Chatroom[] @relation("OwnedChatrooms")
 } 
 
