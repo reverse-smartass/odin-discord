@@ -48,10 +48,7 @@ signupRouter.post("/", validateSignUp, async (req, res, next) => {
         identifier: identifier,
         email: email,
         password: hashedPassword
-      },
-      include: {
-        posts: true,
-      },
+      }
     });
     console.log("Created user:", user);
     res.status(201).json({

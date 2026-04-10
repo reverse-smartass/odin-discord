@@ -160,12 +160,12 @@ userRouter.delete(
   },
 );
 
-userRouter.get("/", async (req, res) => {
+userRouter.get("/",  passport.authenticate("jwt", { session: false }), async (req, res) => {
   const result = await prisma.user.findMany();
   res.json({ result });
 });
 
-userRouter.get("/:userid", async (req, res) => {
+userRouter.get("/:userid",  passport.authenticate("jwt", { session: false }), async (req, res) => {
   const userId = req.params.userid;
 
   const result = await prisma.user.findUnique({

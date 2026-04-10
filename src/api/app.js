@@ -15,11 +15,6 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.use("/sign-up", signupRouter);
-app.use("/message", messageRouter);
-app.use("/user", userRouter);
-app.use("/chatroom", chatroomRouter);
-
 passport.use(
   new LocalStrategy(async (username, password, done) => {
     try {
@@ -65,6 +60,11 @@ passport.use(
 
 app.use(passport.initialize());
 
+app.use("/sign-up", signupRouter);
+app.use("/message", messageRouter);
+app.use("/user", userRouter);
+app.use("/chatroom", chatroomRouter);
+
 app.post("/login", (req, res, next) => {
   passport.authenticate(
     "local",
@@ -82,7 +82,7 @@ app.post("/login", (req, res, next) => {
 
       const token = jwt.sign(
         { id: user.id },
-        process.env.JWT_SECRET || "secretkey",
+        process.env.JWT_SECRET || "a safe secret",
         { expiresIn: "1d" },
       );
 

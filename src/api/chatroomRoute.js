@@ -136,7 +136,6 @@ chatroomRouter.patch(
 chatroomRouter.patch(
   "/:chatroomid/adduser/:userid",
   passport.authenticate("jwt", { session: false }),
-  validateChatroom,
   isChatroomOwner,
   async (req, res, next) => {
     const errors = validationResult(req);
@@ -194,7 +193,6 @@ chatroomRouter.patch(
 chatroomRouter.patch(
   "/:chatroomid/removeuser/:userid",
   passport.authenticate("jwt", { session: false }),
-  validateChatroom,
   isChatroomOwner,
   async (req, res, next) => {
     const errors = validationResult(req);
@@ -281,12 +279,12 @@ chatroomRouter.delete(
   },
 );
 
-chatroomRouter.get("/", async (req, res) => {
+chatroomRouter.get("/",  passport.authenticate("jwt", { session: false }), async (req, res) => {
   const result = await prisma.chatroom.findMany();
   res.json({ result });
 });
 
-chatroomRouter.get("/:chatroomid", async (req, res) => {
+chatroomRouter.get("/:chatroomid",  passport.authenticate("jwt", { session: false }), async (req, res) => {
   const chatroomId = req.params.chatroomid;
 
   const result = await prisma.chatroom.findUnique({
@@ -298,7 +296,7 @@ chatroomRouter.get("/:chatroomid", async (req, res) => {
   res.json(result);
 });
 
-chatroomRouter.get("/:chatroomid/users", async (req, res) => {
+chatroomRouter.get("/:chatroomid/users",  passport.authenticate("jwt", { session: false }), async (req, res) => {
   const chatroomId = req.params.chatroomid;
 
   const result = await prisma.user.findMany({
