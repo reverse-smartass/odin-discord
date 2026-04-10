@@ -12,31 +12,62 @@ datasource db {
   provider = "postgresql"
 }
 
-model User { 
-  id    String    @id @default(uuid()) 
-  email String  @unique
-  name  String?
-  password String @default("placeholder")
-  posts Post[]
-  comments Comment[]
-  role  String  @default("BASIC")
-} 
+model User {
+  id          String   @id @default(uuid())
+  email       String   @unique
+  identifier  String   @unique
+  displayName String?
+  password    String   @default("placeholder")
+  createdAt   DateTime @default(now())
 
-model Post { 
-  id        String     @id @default(uuid()) 
-  title     String
-  content   String?
-  published Boolean @default(false) 
-  author    User    @relation(fields: [authorId], references: [id]) 
-  authorId  String
-  comments  Comment[]
-} 
+  sentMessages      Message[]  @relation("SentMessages")
+  memberOfChatrooms Chatroom[] @relation("ChatroomUsers")
+  ownedChatrooms    Chatroom[] @relation("OwnedChatrooms")
 
-model Comment{
-  id        String     @id @default(uuid()) 
-  content   String?
-  author    User    @relation(fields: [authorId], references: [id]) 
-  post      Post    @relation(fields: [postId], references: [id])
-  authorId  String
-  postId    String
+  // Friend requests sent by this user
+  sentRequests     FriendRequest[] @relation("SentRequests")
+  // Friend requests received by this user
+  receivedRequests FriendRequest[] @relation("ReceivedRequests")
+}
+
+model Chatroom {
+  id               String    @id @default(cuid())
+  roomName         String?
+  // For DMs: store both user IDs so we can derive display name on the client
+  isDirect         Boolean   @default(false)
+  users            User[]    @relation("ChatroomUsers")
+  owner            User      @relation("OwnedChatrooms", fields: [ownerId], references: [id])
+  ownerId          String
+  chatroomMessages Message[] @relation("ChatroomMessages")
+  createdAt        DateTime  @default(now())
+}
+
+model Message {
+  id         String   @id @default(cuid())
+  content    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  edited     Boolean  @default(false)
+  sender     User     @relation("SentMessages", fields: [senderId], references: [id])
+  senderId   String
+  chatroom   Chatroom @relation("ChatroomMessages", fields: [chatroomId], references: [id], onDelete: Cascade)
+  chatroomId String
+}
+
+model FriendRequest {
+  id         String              @id @default(cuid())
+  sender     User                @relation("SentRequests", fields: [senderId], references: [id])
+  senderId   String
+  receiver   User                @relation("ReceivedRequests", fields: [receiverId], references: [id])
+  receiverId String
+  status     FriendRequestStatus @default(PENDING)
+  createdAt  DateTime            @default(now())
+
+  @@unique([senderId, receiverId])
+}
+
+enum FriendRequestStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
 }

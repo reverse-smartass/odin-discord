@@ -1,0 +1,62 @@
+/* ============================================================
+   src/styles/global.css
+   ============================================================ */
+
+@import url("https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap");
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg-base:      #0e0f11;
+  --bg-mid:       #16181c;
+  --bg-surface:   #1d2026;
+  --bg-hover:     #242830;
+  --bg-active:    #2a2f3a;
+
+  --accent:       #5b8cff;
+  --accent-dim:   #3a5fcc;
+  --accent-glow:  rgba(91,140,255,.18);
+
+  --text-primary: #e8eaf0;
+  --text-secondary:#8b909e;
+  --text-muted:   #545a6a;
+
+  --border:       rgba(255,255,255,.07);
+  --border-strong:rgba(255,255,255,.13);
+
+  --danger:       #e05c6b;
+  --success:      #4caf82;
+
+  --radius-sm:    6px;
+  --radius-md:    10px;
+  --radius-lg:    16px;
+  --radius-pill:  999px;
+
+  --sidebar-w:    260px;
+  --transition:   0.18s ease;
+
+  font-family: "DM Sans", sans-serif;
+  font-size: 15px;
+  color: var(--text-primary);
+  background: var(--bg-base);
+  -webkit-font-smoothing: antialiased;
+}
+
+body { height: 100dvh; overflow: hidden; }
+#root { height: 100dvh; display: flex; flex-direction: column; }
+
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+input, textarea { font-family: inherit; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--bg-active); border-radius: 99px; }
+
+/* Utility */
+.sr-only {
+  position: absolute; width:1px; height:1px;
+  padding:0; margin:-1px; overflow:hidden;
+  clip:rect(0,0,0,0); white-space:nowrap; border:0;
+}
