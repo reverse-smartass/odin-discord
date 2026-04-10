@@ -2,6 +2,7 @@
 // src/components/Sidebar.jsx
 // ============================================================
 
+import { Settings } from 'lucide-react';
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../AuthContext";
@@ -102,6 +103,16 @@ export default function Sidebar() {
             <div className="sidebar__footer-name">{user.displayName || user.identifier}</div>
             <div className="sidebar__footer-id">@{user.identifier}</div>
           </div>
+          
+          <button
+            className="sidebar__footer-btn"
+            title="Settings"
+            onClick={() => navigate("/settings/password")}
+          >
+            <Settings size={20} />
+          </button>
+            
+          
           <button
             className="sidebar__footer-btn"
             title="Log out"
