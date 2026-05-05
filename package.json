@@ -11,7 +11,8 @@
     "commit": "git add . && git commit -m \"commit\" && git push",
     "start": "vite",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "build": "vite build && npx prisma generate && npx prisma migrate deploy"
   },
   "repository": {
     "type": "git",
