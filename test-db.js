@@ -2,8 +2,7 @@ import "dotenv/config";
 import { Pool } from 'pg';
 import prisma from './lib/prisma.ts'
 
-console.log("Password type:", typeof process.env.DB_PASSWORD);
-console.log("Password value exists:", !!process.env.DB_PASSWORD);
+console.log("DB link:", process.env.DATABASE_URL);
 
 const pool = new Pool({
  connectionString: process.env.DATABASE_URL
