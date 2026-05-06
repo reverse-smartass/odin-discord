@@ -12,7 +12,7 @@
     "start": "vite",
     "lint": "eslint .",
     "preview": "vite preview",
-    "build": "vite build && npx prisma generate && npm run dev"
+    "build": "vite build"
   },
   "repository": {
     "type": "git",
