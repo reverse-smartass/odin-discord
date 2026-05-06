@@ -25,10 +25,9 @@ dist-ssr
 # Keep environment variables out of version control
 .env
 /src/test-connection.ts
-/generated/prisma
+
 /setup.txt
 /prisma/migrations
-/generated/prisma
 manual-query.ts
 test-db.js
 
