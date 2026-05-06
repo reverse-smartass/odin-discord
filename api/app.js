@@ -20,7 +20,7 @@ import friendRouter from "./friendRoute.js";
 const app = express();
 
 
-const allowedOrigins = ['http://localhost:5173', 'http://127.0.0.1:5173', process.env.CLIENT_ORIGIN];
+const allowedOrigins = ['http://localhost:5173', 'http://127.0.0.1:5173', 'https://odin-discord.vercel.app/',process.env.CLIENT_ORIGIN];
 
 app.use(cors({
   origin: function (origin, callback) {
