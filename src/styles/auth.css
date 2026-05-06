@@ -121,11 +121,20 @@
 .btn--primary:active { transform: scale(.98); }
 .btn--primary:disabled { opacity: .5; cursor: default; }
 
+.btn--prim {
+  background: var(--accent);
+  color: #fff;
+}
+.btn--prim:hover { background: var(--accent-dim); }
+.btn--prim:active { transform: scale(.98); }
+.btn--prim:disabled { opacity: .5; cursor: default; }
+
 .btn--ghost {
   background: transparent;
   color: var(--text-secondary);
   border: 1px solid var(--border-strong);
 }
+
 .btn--ghost:hover { background: var(--bg-hover); color: var(--text-primary); }
 
 .btn--danger {

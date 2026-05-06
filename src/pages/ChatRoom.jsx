@@ -151,7 +151,7 @@ export default function ChatRoom() {
                         }}
                         autoFocus
                       />
-                      <button className="btn btn--sm btn--primary" onClick={() => handleEditSave(msg.id)}>Save</button>
+                      <button className="btn btn--sm btn--prim" onClick={() => handleEditSave(msg.id)}>Save</button>
                       <button className="btn btn--sm btn--ghost" onClick={() => setEditingId(null)}>Cancel</button>
                     </div>
                   ) : (
