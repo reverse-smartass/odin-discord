@@ -4,7 +4,7 @@
 // ============================================================
 
 import { Router } from "express";
-import prisma from "../lib/prisma.ts";
+import prisma from "../lib/prisma.js";
 import { body, validationResult } from "express-validator";
 import passport from "passport";
 

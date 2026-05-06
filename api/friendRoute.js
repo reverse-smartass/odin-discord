@@ -3,7 +3,7 @@
 // ============================================================
 
 import { Router } from "express";
-import prisma from "../lib/prisma.ts";
+import prisma from "../lib/prisma.js";
 import passport from "passport";
 
 const friendRouter = Router();

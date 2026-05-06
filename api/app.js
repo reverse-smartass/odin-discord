@@ -5,7 +5,7 @@
 import express from "express";
 import jwt from "jsonwebtoken";
 import cors from "cors";
-import prisma from "../lib/prisma.ts";
+import prisma from "../lib/prisma.js";
 import { Strategy as LocalStrategy } from "passport-local";
 import bcrypt from "bcryptjs";
 import passport from "passport";
